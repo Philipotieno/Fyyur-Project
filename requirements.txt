@@ -1,0 +1,14 @@
+Babel==2.7.0
+Click==7.0
+Flask==1.1.1
+Flask-Moment==0.9.0
+Flask-WTF==0.14.2
+itsdangerous==1.1.0
+Jinja2==2.10.3
+MarkupSafe==1.1.1
+pkg-resources==0.0.0
+python-dateutil==2.6.0
+pytz==2019.3
+six==1.13.0
+Werkzeug==0.16.0
+WTForms==2.2.1
