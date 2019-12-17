@@ -10,7 +10,7 @@ from logging import FileHandler, Formatter
 import babel
 import dateutil.parser
 from flask import (Flask, Response, flash, redirect, render_template, request,
-                   url_for)
+                   url_for, jsonify)
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -359,14 +359,26 @@ def show_venue(venue_id):
 
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
+##This endpoint can be tested on postman 
 def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
-  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-
-  # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
-  # clicking that button delete it from the db then redirect the user to the homepage
-  return None
-
+  success = True
+  status = 200
+  
+  try:
+    Venue.query.filter_by(id=venue_id).delete()
+    db.session.commit()
+  except :
+    success = False
+    status = 500
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+    if success:
+      flash('Venue had been deleted')
+    else:
+      flash('Venue could not be deleted')
+    return jsonify({'success': success}), status
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
