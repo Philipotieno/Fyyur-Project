@@ -51,8 +51,8 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(120))
     
-    venues = db.relationship('Venue', secondary='shows', back_populates='artists')
-    shows = db.relationship('Show')
+    venues = db.relationship('Venue', secondary='shows')
+    shows = db.relationship('Show', backref=('artists'))
     
     def to_dict(self):
       return {
@@ -88,8 +88,8 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(120))
       
-    artists = db.relationship('Artist', secondary='shows', back_populates='venues')
-    shows = db.relationship('Show')
+    artists = db.relationship('Artist', secondary='shows')
+    shows = db.relationship('Show', backref=('venues'))
   
     def to_dict(self):
       return {
@@ -357,28 +357,6 @@ def show_venue(venue_id):
 
   return render_template('pages/show_venue.html', venue=data)
 
-
-@app.route('/venues/<venue_id>', methods=['DELETE'])
-##This endpoint can be tested on postman http://0.0.0.0:8080/venues/venue_id
-def delete_venue(venue_id):
-  success = True
-  status = 200
-  
-  try:
-    Venue.query.filter_by(id=venue_id).delete()
-    db.session.commit()
-  except :
-    success = False
-    status = 500
-    db.session.rollback()
-    print(sys.exc_info())
-  finally:
-    db.session.close()
-    if success:
-      flash('Venue had been deleted')
-    else:
-      flash('Venue could not be deleted')
-    return jsonify({'success': success}), status
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
